@@ -1,0 +1,33 @@
+﻿@page "/VerifyOtp/{username}"
+@using ResetSystem.Services
+@inject UserService userService
+@inject NavigationManager nav
+@rendermode InteractiveServer
+
+
+<h3>Verify OTP for @username</h3>
+
+<input class="form-control" @bind="InputOtp" placeholder="Enter OTP" />
+<button class="btn btn-success mt-2" @onclick="Verify">Verify</button>
+
+<p class="text-danger">@Message</p>
+
+@code {
+    [Parameter] public string username { get; set; } = "";
+    string InputOtp;
+    string Message;
+
+    void Verify()
+    {
+        Message = "";
+        if (userService.VerifyOtp(username, InputOtp))
+        {
+            userService.MarkOtpUsed(username, InputOtp);
+            nav.NavigateTo($"/ResetPassword/{username}");
+        }
+        else
+        {
+            Message = "Invalid বা expired OTP।";
+        }
+    }
+}
